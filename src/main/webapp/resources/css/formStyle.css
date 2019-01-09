@@ -1,0 +1,17 @@
+form.form-control {
+    display: table;
+}
+
+div.form-control {
+    display: table-row;
+}
+
+label, input,select, #reset{
+    display: table-cell;
+    margin-bottom: 10px;
+    text-align: left;
+}
+
+label {
+    padding-right: 50px;
+}
