@@ -21,14 +21,12 @@
 			</ul>
         </nav>
 
-        <h1 align="center">Update Account</h1>
+        <h1 align="center">Open Account</h1>
                  <hr>
         <div align="center">
-			<form action="updateSA" method="post">
-				Enter Account Number: <input type="number" name="txtAccountNumber" />
-				<br /> <input type="submit" value="Submit">
 		
-			</form>
+			<h1><a href="addNewSAForm">Add New Saving Account</a></h1>
+			<h1><a href="addNewCAForm">Add New Current Account</a></h1>
 		</div>
   <footer>Copyscape © 2018 Money Money Bank. All rights reserved. Terms of Use.</footer>
     <!-- <object  type="text/html" data="resources/include/footer.html"></object> -->

@@ -40,9 +40,16 @@
 				<td>${account.bankAccount.accountNumber}</td>
 				<td>${account.bankAccount.accountHolderName }</td>
 				<td>${account.bankAccount.accountBalance}</td>
-				<td>${account.salary==true?"Yes":"No"}</td>
-				<td>${"N/A"}</td>
-				<td>${"Savings"}</td>
+				<td> <%-- <td>${account.salary==true?"Yes":"No"}</td> --%>
+					<jstl:catch var="exception">${account.salary==true?"Yes":"No"}</jstl:catch>
+					<jstl:if test="${not empty exception}">null</jstl:if>
+				</td>
+				<td><!-- <td>${"N/A"}</td> -->
+					<jstl:catch var="exception">${account.odLimit}</jstl:catch>
+					<jstl:if test="${not empty exception}">null</jstl:if>
+				</td>	
+				
+				<td>${account.bankAccount.type}</td>
 			</tr>
 		</jstl:if>
 		<jstl:if test="${accounts!=null}">
@@ -51,9 +58,15 @@
 					<td>${account.bankAccount.accountNumber}</td>
 					<td>${account.bankAccount.accountHolderName }</td>
 					<td>${account.bankAccount.accountBalance}</td>
-					<td>${account.salary==true?"Yes":"No"}</td>
-					<td>${"N/A"}</td>
-					<td>${"Savings"}</td>
+					<td> <%-- <td>${account.salary==true?"Yes":"No"}</td> --%>
+						<jstl:catch var="exception">${account.salary==true?"Yes":"No"}</jstl:catch>
+						<jstl:if test="${not empty exception}">null</jstl:if>
+					</td>
+					<td><!-- <td>${"N/A"}</td> -->
+						<jstl:catch var="exception">${account.odLimit}</jstl:catch>
+						<jstl:if test="${not empty exception}">null</jstl:if>
+					</td>
+					<td>${account.bankAccount.type}</td>
 				</tr>
 			</jstl:forEach>
 		</jstl:if>

@@ -2,161 +2,191 @@ package com.moneymoney.controller;
 
 import java.sql.SQLException;
 import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.support.SessionStatus;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.moneymoney.account.service.SavingsAccountService;
+import com.moneymoney.pojo.account.Account;
 import com.moneymoney.pojo.account.SavingsAccount;
 import com.moneymoney.pojo.exception.AccountNotFoundException;
+import com.moneymoney.validation.AccountValidation;
 
 /**
  * @author ugawari
  *
  */
 @Controller
+@SessionAttributes("account")
 public class AccountController {
-	
+
 	@Autowired
-	SavingsAccountService service; 
+	AccountValidation accountValidation;
+
+	@Autowired
+	SavingsAccountService service;
 	
 	@RequestMapping("/index")
 	public String index() {
 		return "index";
 	}
 	
+	@RequestMapping("/openAccount")
+	public String openAccount() {
+		return "OpenAccount";
+	}
+
 	@RequestMapping("/getAll")
-	public String getAllSavingsAccount(Model model) throws ClassNotFoundException, SQLException{
-		  List<SavingsAccount> accounts = service.getAllSavingsAccount();
-		  model.addAttribute("accounts", accounts);
+	public String getAllSavingsAccount(Model model, SessionStatus status) throws ClassNotFoundException, SQLException {
+		if (!status.isComplete()) {
+			status.setComplete();
+		}
+		//List<SavingsAccount> accounts = service.getAllSavingsAccount();
+		List<Account> accounts = service.getAllAccounts();
+		//System.out.println(accounts.toString());
+		model.addAttribute("accounts", accounts);
 		return "AccountDetails";
 	}
-	
+
 	@RequestMapping("/addNewSAForm")
-	public String addNewSAForm() {
+	public String addNewSAForm(Map map) {
+		map.put("account", new SavingsAccount());
 		return "addNewSAForm";
 	}
 	
+
 	@RequestMapping("/addNewSA")
-	public String addNewSA(HttpServletRequest request) throws ClassNotFoundException, SQLException, AccountNotFoundException {
-		String accountHolderName = request.getParameter("txtAccHN");
-		double accountBalance = Double.parseDouble(request.getParameter("txtBalance"));
-		boolean salary = request.getParameter("rdSalary").equalsIgnoreCase("yes")?true:false;
-		if(request.getParameter("accountNumber") != ""){
-			int accountNo = Integer.parseInt(request.getParameter("accountNumber"));
-			String name = request.getParameter("txtAccHN");
-			SavingsAccount account = service.getAccountById(accountNo);
-			account.setSalary(salary);
-			account.getBankAccount().setAccountHolderName(name);
-			service.updateAccount(account, accountNo);
-		}else{
-			service.createNewAccount(accountHolderName, accountBalance, salary);
+	public String addNewSA(@ModelAttribute("account") SavingsAccount account, Model model, BindingResult result)
+			throws ClassNotFoundException, SQLException, AccountNotFoundException {
+		accountValidation.validate(account, result);
+
+		if (result.hasErrors()) {
+			return "addNewSAForm";
 		}
-		return "redirect:getAll";
+
+		if (account.getBankAccount().getAccountNumber() != 0) {
+			account = service.updateAccount(account, account.getBankAccount().getAccountNumber());
+		} else {
+			account = service.createNewAccount(account.getBankAccount().getAccountHolderName(),
+					account.getBankAccount().getAccountBalance(), account.isSalary());
+		}
+		model.addAttribute("account", account);
+		// return "redirect:display";
+		return "AccountDetails";
 	}
-		
+
+	@RequestMapping(value = "/display", method = RequestMethod.GET)
+	public String display(SessionStatus status) {
+		return "AccountDetails";
+	}
+
 	@RequestMapping("/closeAccount")
 	public String closeAccount() {
 		return "closeAccount";
 	}
-	
+
 	@RequestMapping("/closeSaAccount")
-	public String closeSaAccount(HttpServletRequest request) throws ClassNotFoundException, SQLException, AccountNotFoundException {
-		int accountNumber = Integer.parseInt(request.getParameter("accountNumber"));
+	public String closeSaAccount(@RequestParam("accountNumber") int accountNumber)
+			throws ClassNotFoundException, SQLException, AccountNotFoundException {
 		service.deleteAccount(accountNumber);
 		return "redirect:getAll";
 	}
-	  
-	@RequestMapping("/searchForm")
+
+	@RequestMapping(value = "/searchForm", method = RequestMethod.GET)
 	public String searchForm() {
 		return "SearchForm";
 	}
-	  
-	@RequestMapping("/searchAccount")
-	public String searchAccount(HttpServletRequest request) throws AccountNotFoundException {
-		int accountNumber = Integer.parseInt(request.getParameter("txtAccountNumber"));
+
+	@RequestMapping(value = "/searchForm", method = RequestMethod.POST)
+	public ModelAndView searchAccount(@RequestParam("txtAccountNumber") int accountNumber)
+			throws AccountNotFoundException {
 		SavingsAccount account = service.getAccountById(accountNumber);
-		request.setAttribute("account", account);
-		return "AccountDetails";
+		return new ModelAndView("AccountDetails", "account",account);
+		//return "redirect:display";
 	}
-	
-	@RequestMapping("/updateSA")
+
+	@RequestMapping(value = "/updateSA", method = RequestMethod.GET)
 	public String updateSA() {
 		return "updateSA";
 	}
-	  
-	@RequestMapping("/updateSAccount")
-	public String updateSAccount(HttpServletRequest request, Model model) throws AccountNotFoundException {
-		int accountNumber = Integer.parseInt(request.getParameter("txtAccountNumber"));
+
+	@RequestMapping(value = "/updateSA", method = RequestMethod.POST)
+	public ModelAndView updateSAccount(@RequestParam("txtAccountNumber") int accountNumber)
+			throws AccountNotFoundException {
 		SavingsAccount account = service.getAccountById(accountNumber);
-		model.addAttribute("account", account);
-		return "addNewSAForm";
+		return new ModelAndView("addNewSAForm", "account", account);
 	}
-	 	
-	@RequestMapping("/getCurrentBalance")
+
+	@RequestMapping(value = "/getCurrentBalance", method = RequestMethod.GET)
 	public String getCurrentBalance() {
 		return "getCurrentBalance";
 	}
-	  
-	@RequestMapping("/getCurrentBalanceOfSa")
-	public String getCurrentBalanceOfSa(HttpServletRequest request, Model model) throws AccountNotFoundException, ClassNotFoundException, SQLException {
-		int accountNumber = Integer.parseInt(request.getParameter("accountNumber"));
+
+	@RequestMapping(value = "/getCurrentBalance", method = RequestMethod.POST)
+	public ModelAndView getCurrentBalanceOfSa(@RequestParam("accountNumber") int accountNumber)
+			throws AccountNotFoundException, ClassNotFoundException, SQLException {
 		double currentBalance = service.getCurrentBalance(accountNumber);
-		model.addAttribute("currentBalance", currentBalance);
-		return "currentBalance";
+		return new ModelAndView("currentBalance", "currentBalance", currentBalance);
 	}
-	
-	@RequestMapping("/deposit")
+
+	@RequestMapping(value = "/deposit", method = RequestMethod.GET)
 	public String deposit() {
 		return "deposit";
 	}
-	
-	@RequestMapping("/depositInSA")
-	public String depositInSA(HttpServletRequest request, Model model) throws AccountNotFoundException {
-		int accountNumber = Integer.parseInt(request.getParameter("accountNumber"));
-		double amount = Double.parseDouble(request.getParameter("amount"));
+
+	@RequestMapping(value = "/deposit", method = RequestMethod.POST)
+	public String depositInSA(@RequestParam("accountNumber") int accountNumber, @RequestParam("amount") double amount,
+			Model model) throws AccountNotFoundException {
 		SavingsAccount savingsAccount = service.getAccountById(accountNumber);
 		service.deposit(savingsAccount, amount);
 		savingsAccount = service.getAccountById(accountNumber);
 		model.addAttribute("account", savingsAccount);
-		return "AccountDetails";
+		return "redirect:display";
+		// return new ModelAndView("AccountDetails", "account", savingsAccount);
 	}
-	  
-	
-	@RequestMapping("/withdraw")
+
+	@RequestMapping(value = "/withdraw", method = RequestMethod.GET)
 	public String withdraw() {
 		return "withdraw";
 	}
-	
-	@RequestMapping("/withdrawFromSa")
-	public String withdrawFromSa(HttpServletRequest request, Model model) throws AccountNotFoundException {
-		int accountNumber = Integer.parseInt(request.getParameter("accountNumber"));
-	    double amount = Double.parseDouble(request.getParameter("amount"));
-	    SavingsAccount savingsAccount = service.getAccountById(accountNumber);
-	    service.withdraw(savingsAccount, amount);
-	    savingsAccount = service.getAccountById(accountNumber);
+
+	@RequestMapping(value = "/withdraw", method = RequestMethod.POST)
+	public String withdrawFromSa(@RequestParam("accountNumber") int accountNumber,
+			@RequestParam("amount") double amount, Model model) throws AccountNotFoundException {
+		SavingsAccount savingsAccount = service.getAccountById(accountNumber);
+		service.withdraw(savingsAccount, amount);
+		savingsAccount = service.getAccountById(accountNumber);
+		// return new ModelAndView("AccountDetails", "account", savingsAccount);
 		model.addAttribute("account", savingsAccount);
-		return "AccountDetails";
+		return "redirect:display";
 	}
-	  
-	@RequestMapping("/fundTransfer")
+
+	@RequestMapping(value = "/fundTransfer", method = RequestMethod.GET)
 	public String fundTransfer() {
 		return "fundTransfer";
 	}
-	 
-	@RequestMapping("/fundTransferInSA")
-	public String fundTransferInSA(HttpServletRequest request, Model model) throws ClassNotFoundException, SQLException, AccountNotFoundException {
-		int senderAccountNumber = Integer.parseInt(request.getParameter("senderAccountNumber"));
-		int receiverAccountNumber = Integer.parseInt(request.getParameter("receiverAccountNumber"));
-		double amount = Double.parseDouble(request.getParameter("amount"));
-			SavingsAccount senderSavingsAccount = service.getAccountById(senderAccountNumber);
-			SavingsAccount receiverSavingsAccount = service.getAccountById(receiverAccountNumber);
-			service.fundTransfer(senderSavingsAccount, receiverSavingsAccount, amount);
-		return "fundTransfer";
+
+	@RequestMapping(value = "/fundTransfer", method = RequestMethod.POST)
+	public String fundTransferInSA(@RequestParam("senderAccountNumber") int senderAccountNumber,
+			@RequestParam("receiverAccountNumber") int receiverAccountNumber, @RequestParam("amount") double amount,
+			Model model) throws ClassNotFoundException, SQLException, AccountNotFoundException {
+		SavingsAccount senderSavingsAccount = service.getAccountById(senderAccountNumber);
+		SavingsAccount receiverSavingsAccount = service.getAccountById(receiverAccountNumber);
+		service.fundTransfer(senderSavingsAccount, receiverSavingsAccount, amount);
+		SavingsAccount account = service.getAccountById(senderAccountNumber);
+		model.addAttribute("account", account);
+		// return "AccountDetails";
+		return "redirect:display";
 	}
-	
+
 }

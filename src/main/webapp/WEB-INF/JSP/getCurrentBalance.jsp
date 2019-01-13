@@ -24,7 +24,7 @@
         <h1 align="center">Get Current Account</h1>
                  <hr>
         <div align="center">
-			<form action="getCurrentBalanceOfSa">
+			<form action="getCurrentBalance" method="post">
 				<label>Enter Account Number : </label> 
 				<input type="number" name="accountNumber" /> 
 				<br>

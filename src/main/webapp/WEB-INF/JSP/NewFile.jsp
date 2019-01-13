@@ -1,6 +1,4 @@
 <%@ taglib prefix="jstl" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="spring" uri="http://www.springframework.org/tags/form" %>
-<%@ taglib prefix="core" uri="http://www.springframework.org/tags" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -8,11 +6,6 @@
 	<script type="text/javascript" src="http://code.jquery.com/jquery-1.4.2.min.js"></script>
 	<link rel="stylesheet" type="text/css" href="resources/css/headerStyle.css">
     <link rel="stylesheet" type="text/css" href="resources/css/footerStyle.css">
-    <style type="text/css">
-	.error{
-		color:red 
-	}
-</style>
 </head>
 <body>
 	<div class="header">
@@ -31,41 +24,37 @@
         <h1 align="center">Registration Form</h1>
                  <hr>
         <div align="center">
-		<spring:form action="addNewSA" modelAttribute="account">
+		<form action="addNewSA">
 			<div id="accountNo">
 			    <label>Account Number: </label> 
-				<spring:input path="bankAccount.accountNumber" id="accountNumber" value="${requestScope.account.bankAccount.accountNumber}" readonly="readonly" />
-				<spring:errors path="bankAccount.accountNumber" cssClass="error"/>
+				<input type="text" name="accountNumber" id="accountNumber" value="${requestScope.account.bankAccount.accountNumber}" readonly="readonly" />
 				<br>
 			</div>
 			
 			<label>Enter Account Holder Name: </label> 
-			<spring:input path="bankAccount.accountHolderName" id="txtAccHN" value="${requestScope.account.bankAccount.accountHolderName }" />
-			<spring:errors path="bankAccount.accountHolderName" cssClass="error"/>
+			<input type="text" name="txtAccHN" id="txtAccHN" value="${requestScope.account.bankAccount.accountHolderName }" />
 			<br />
 			
 			<label>Enter Account Balance: </label>
-			<spring:input path="bankAccount.accountBalance" id="txtBalance" value="${requestScope.account.bankAccount.accountBalance}" />
-			<spring:errors path="bankAccount.accountBalance" cssClass="error"/>
+			<input type="number" name="txtBalance" id="txtBalance" value="${requestScope.account.bankAccount.accountBalance}" />
 			<br />
 			
 			<input type="hidden" id="salary" value="${requestScope.account.salary}">
 			
 			<label>Salaried?: </label>
-			<spring:radiobutton path="salary" id="yes" value="Yes" /> Yes
-			<spring:radiobutton path="salary" id="no" value="No" /> No 
-			<spring:errors path="salary" cssClass="error"/>
+			<input type="radio" name="rdSalary" id="yes" value="Yes" /> Yes
+			<input type="radio" name="rdSalary" id="no" value="No" /> No 
 			<br />
 			
 			<input type="submit" id="submit" value="Submit" /> 
 			<input type="submit" id="update" value="Update" /> 
 			<input type="reset" value="Clear" />
-		</spring:form>
+		</form>
 	</div>
 	
 	<script type="text/javascript">
 		$(function(){
-			if($("#accountNumber").val()!=0){
+			if($("#accountNumber").val()!=""){
 				$("#submit").hide();
 				//$("#txtAccHN").attr('readonly', true);
 				$("#txtBalance").attr('readonly', true);
@@ -74,7 +63,7 @@
 				}else{
 					 $("#no").attr('checked', 'checked');
 				}
-			}else if($("#accountNumber").val()==0){
+			}else if($("#accountNumber").val()==""){
 				$("#accountNo").hide();
 				$("#update").hide();
 			}

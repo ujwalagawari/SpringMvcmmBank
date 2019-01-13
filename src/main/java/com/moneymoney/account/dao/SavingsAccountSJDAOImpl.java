@@ -2,17 +2,25 @@
  * 
  */
 package com.moneymoney.account.dao;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import com.moneymoney.pojo.account.Account;
+import com.moneymoney.pojo.account.AccountMapper;
 import com.moneymoney.pojo.account.SavingsAccount;
 import com.moneymoney.pojo.account.SavingsAccountMapper;
 import com.moneymoney.pojo.exception.AccountNotFoundException;
+import com.mysql.jdbc.Statement;
 
 /**
  * @author ugawari
@@ -27,13 +35,22 @@ public class SavingsAccountSJDAOImpl implements SavingsAccountDAO{
 	
 	@Override
 	public SavingsAccount createNewAccount(SavingsAccount account) {
-		template.update("INSERT INTO ACCOUNT VALUES(?,?,?,?,?,?)", new Object[] {
-				account.getBankAccount().getAccountNumber(),
-				account.getBankAccount().getAccountHolderName(),
-				account.getBankAccount().getAccountBalance(),
-				account.isSalary(),
-				null, "SA"
-		});
+		KeyHolder holder = new GeneratedKeyHolder();
+		template.update(new PreparedStatementCreator() {
+			@Override
+			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
+				 PreparedStatement statement = con.prepareStatement("INSERT INTO ACCOUNT VALUES(?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+		         statement.setInt(1, account.getBankAccount().getAccountNumber());
+		         statement.setString(2, account.getBankAccount().getAccountHolderName());
+		         statement.setDouble(3, account.getBankAccount().getAccountBalance());
+		         statement.setBoolean(4, account.isSalary());
+		         statement.setString(5, null);
+		         statement.setString(6, "SA");
+		         return statement;
+			}
+		},holder);
+		
+		account.getBankAccount().setAccountNumber(holder.getKey().intValue());
 		return account;
 	}
 
@@ -92,6 +109,11 @@ public class SavingsAccountSJDAOImpl implements SavingsAccountDAO{
 				new SavingsAccountMapper()
 		);
 		return listOfAccounts;
+	}
+
+	@Override
+	public List<Account> getAllAccounts() {
+		return template.query("SELECT * FROM ACCOUNT" , new AccountMapper());
 	}
 
 }

@@ -10,6 +10,7 @@ public class BankAccount {
 	private int accountNumber;
 	private double accountBalance;
 	private String accountHolderName;
+	private String type;
 
 	/**
 	 * 
@@ -41,6 +42,14 @@ public class BankAccount {
 		this.accountBalance = accountBalance;
 	}
 
+	public BankAccount(int accountNumber, String accountHolderName, double accountBalance, String type) {
+		this.accountNumber = accountNumber;
+		this.accountHolderName = accountHolderName;
+		this.accountBalance = accountBalance;
+		this.type=type;
+	}
+
+
 	public String getAccountHolderName() {
 		return accountHolderName;
 	}
@@ -57,10 +66,29 @@ public class BankAccount {
 		return accountBalance;
 	}
 	
-	@Override
-	public String toString() {
-		return "accountNumber=" + accountNumber + ", accountBalance=" + accountBalance
-				+ ", accountHolderName=" + accountHolderName + "";
+	public void setAccountNumber(int accountNumber) {
+		this.accountNumber = accountNumber;
+	}
+	
+	public void setAccountBalance(double accountBalance) {
+		this.accountBalance = accountBalance;
 	}
 
+	public String getType() {
+		return type;
+	}
+	
+	public void setType(String type) {
+		this.type = type;
+	}
+
+
+	@Override
+	public String toString() {
+		return "BankAccount [accountNumber=" + accountNumber + ", accountBalance=" + accountBalance
+				+ ", accountHolderName=" + accountHolderName + ", type=" + type + "]";
+	}
+
+
+	
 }

@@ -20,7 +20,7 @@
         </div>
         <nav id="menu">
 			<ul>
-				<li><a href="addNewSAForm">Add New Savings Account</a></li>
+				<li><a href="openAccount">Open Account</a></li>
 				<li><a href="updateSA">Update Account</a></li>
 				<li><a href="searchForm">Search Account</a></li>
 				<li><a href="closeAccount">Close Account</a></li>

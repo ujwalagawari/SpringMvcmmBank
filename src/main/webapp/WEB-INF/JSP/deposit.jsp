@@ -24,7 +24,7 @@
         <h1 align="center">Deposit Amount</h1>
                  <hr>
         <div align="center">
-			<form action="depositInSA">
+			<form action="deposit" method="post">
 				<label>Enter Account Number : </label> 
 				<input type="number" name="accountNumber" /> 
 				<br>

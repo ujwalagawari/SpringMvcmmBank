@@ -3,6 +3,7 @@ package com.moneymoney.account.service;
 import java.sql.SQLException;
 import java.util.List;
 
+import com.moneymoney.pojo.account.Account;
 import com.moneymoney.pojo.account.SavingsAccount;
 import com.moneymoney.pojo.exception.AccountNotFoundException;
 
@@ -29,6 +30,8 @@ public interface SavingsAccountService {
 	List<SavingsAccount> getAccountsByHolderName(String holderName) throws SQLException, ClassNotFoundException;
 
 	List<SavingsAccount> getAccountsBetweenMinMaxAccountBal(Double minBalance,Double maxBalance) throws SQLException, ClassNotFoundException;
+
+	List<Account> getAllAccounts();
 
 
 	

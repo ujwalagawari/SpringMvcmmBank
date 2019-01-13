@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.moneymoney.account.dao.SavingsAccountDAO;
 import com.moneymoney.account.factory.AccountFactory;
+import com.moneymoney.pojo.account.Account;
 import com.moneymoney.pojo.account.SavingsAccount;
 import com.moneymoney.pojo.exception.AccountNotFoundException;
 import com.moneymoney.pojo.exception.InsufficientFundsException;
@@ -22,6 +23,11 @@ public class SavingsAccountServiceImpl implements SavingsAccountService {
 	
 	@Autowired
 	private SavingsAccountDAO savingsAccountDAO;
+	
+	/*
+	 * public SavingsAccountServiceImpl() { factory=AccountFactory.getInstance(); }
+	 */
+	
 
 	@Override
 	public SavingsAccount createNewAccount(String accountHolderName, double accountBalance, boolean salary)
@@ -74,6 +80,7 @@ public class SavingsAccountServiceImpl implements SavingsAccountService {
 
 	@Override
 	public double getCurrentBalance(int accountNumber) throws ClassNotFoundException, SQLException, AccountNotFoundException {
+		System.out.println("accountNumber "+accountNumber);
 		return savingsAccountDAO.getCurrentBalance(accountNumber);
 	}
 	
@@ -85,5 +92,10 @@ public class SavingsAccountServiceImpl implements SavingsAccountService {
 	@Override
 	public List<SavingsAccount> getAccountsBetweenMinMaxAccountBal(Double minBalance, Double maxBalance) throws SQLException, ClassNotFoundException {
 		return savingsAccountDAO.getAccountsBetweenMinMaxAccountBal(minBalance, maxBalance);
+	}
+
+	@Override
+	public List<Account> getAllAccounts() {
+		return savingsAccountDAO.getAllAccounts();
 	}
 }

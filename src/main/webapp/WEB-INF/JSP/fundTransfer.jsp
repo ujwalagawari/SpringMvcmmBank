@@ -24,7 +24,7 @@
         <h1 align="center">Fund Transfer</h1>
                  <hr>
         <div align="center">
-			<form action="fundTransferInSA">
+			<form action="fundTransfer" method="post">
 				<label>Enter Sender Account Number : </label> 
 				<input type="number" name="senderAccountNumber" /> 
 				<br>

@@ -25,6 +25,12 @@ public class SavingsAccount {
 		bankAccount = new BankAccount(accountNumber, accountHolderName, accountBalance);
 		this.salary = salary;
 	}
+	
+	public SavingsAccount(int accountNumber, String accountHolderName, double accountBalance, boolean salary, String type) {
+		bankAccount = new BankAccount(accountNumber, accountHolderName, accountBalance, type);
+		this.salary = salary;
+	}
+
 	public boolean isSalary() {
 		return salary;
 	}

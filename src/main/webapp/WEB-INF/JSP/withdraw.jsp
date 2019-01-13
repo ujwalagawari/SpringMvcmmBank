@@ -24,7 +24,7 @@
         <h1 align="center">Withdraw Form</h1>
                  <hr>
         <div align="center">
-			<form action="withdrawFromSa">
+			<form action="withdraw" method="post">
 				<label>Enter Account Number : </label> 
 				<input type="number" name="accountNumber" /> 
 				<br>

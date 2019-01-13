@@ -1,4 +1,7 @@
-package com.moneymoney.account.dao;
+/**
+ * 
+ */
+package com.moneymoney.account.service;
 
 import com.moneymoney.pojo.account.CurrentAccount;
 
@@ -6,10 +9,10 @@ import com.moneymoney.pojo.account.CurrentAccount;
  * @author ugawari
  *
  */
-public interface CurrentAccountDao {
+public interface CurrentAccountService {
 
 	CurrentAccount createNewCurrentAccount(CurrentAccount account);
 
 	CurrentAccount updateCurrentAccount(CurrentAccount account);
-	
+
 }

@@ -24,7 +24,7 @@
         <h1 align="center">Search Account</h1>
                  <hr>
         <div align="center">
-			<form action="searchAccount">
+			<form action="searchForm" method="post">
 				Enter Account Number: <input type="number" name="txtAccountNumber" />
 				<br /> <input type="submit" value="Submit">
 		

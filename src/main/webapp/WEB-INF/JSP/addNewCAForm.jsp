@@ -31,30 +31,29 @@
         <h1 align="center">Registration Form</h1>
                  <hr>
         <div align="center">
-		<spring:form action="addNewSA" modelAttribute="account">
+		<spring:form action="addNewCA" modelAttribute="account">
 			<div id="accountNo">
 			    <label>Account Number: </label> 
-				<spring:input path="bankAccount.accountNumber" id="accountNumber" value="${requestScope.account.bankAccount.accountNumber}" readonly="readonly" />
+				<spring:input path="bankAccount.accountNumber" id="accountNumber" value="${account.bankAccount.accountNumber}" readonly="readonly" />
 				<spring:errors path="bankAccount.accountNumber" cssClass="error"/>
 				<br>
 			</div>
 			
 			<label>Enter Account Holder Name: </label> 
-			<spring:input path="bankAccount.accountHolderName" id="txtAccHN" value="${requestScope.account.bankAccount.accountHolderName }" />
+			<spring:input path="bankAccount.accountHolderName" id="txtAccHN" value="${account.bankAccount.accountHolderName }" />
 			<spring:errors path="bankAccount.accountHolderName" cssClass="error"/>
 			<br />
 			
 			<label>Enter Account Balance: </label>
-			<spring:input path="bankAccount.accountBalance" id="txtBalance" value="${requestScope.account.bankAccount.accountBalance}" />
+			<spring:input path="bankAccount.accountBalance" id="txtBalance" value="${account.bankAccount.accountBalance}" />
 			<spring:errors path="bankAccount.accountBalance" cssClass="error"/>
 			<br />
 			
-			<input type="hidden" id="salary" value="${requestScope.account.salary}">
-			
-			<label>Salaried?: </label>
-			<spring:radiobutton path="salary" id="yes" value="Yes" /> Yes
-			<spring:radiobutton path="salary" id="no" value="No" /> No 
-			<spring:errors path="salary" cssClass="error"/>
+			<div id="od">
+				<label>Over Draft Limit </label>
+				<spring:input path="odLimit" value="1000" />
+				<spring:errors path="odLimit" cssClass="error"/>
+			</div>
 			<br />
 			
 			<input type="submit" id="submit" value="Submit" /> 
@@ -65,15 +64,9 @@
 	
 	<script type="text/javascript">
 		$(function(){
+			$("#od").hide();
 			if($("#accountNumber").val()!=0){
 				$("#submit").hide();
-				//$("#txtAccHN").attr('readonly', true);
-				$("#txtBalance").attr('readonly', true);
-				if($("#salary").val()=="true"){
-					 $("#yes").attr('checked', 'checked');
-				}else{
-					 $("#no").attr('checked', 'checked');
-				}
 			}else if($("#accountNumber").val()==0){
 				$("#accountNo").hide();
 				$("#update").hide();
