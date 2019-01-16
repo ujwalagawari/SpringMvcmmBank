@@ -27,6 +27,10 @@ public class CurrentAccount {
 		this.odLimit = odLimit;
 	}
 	
+	public CurrentAccount(double odLimit) {
+		this.odLimit=odLimit;
+	}
+
 	public double getOdLimit() {
 		return odLimit;
 	}

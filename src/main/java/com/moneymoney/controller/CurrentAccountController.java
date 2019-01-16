@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 import com.moneymoney.account.service.CurrentAccountService;
+import com.moneymoney.pojo.account.Account;
 import com.moneymoney.pojo.account.CurrentAccount;
 import com.moneymoney.pojo.exception.AccountNotFoundException;
 import com.moneymoney.validation.CurrentAccountValidation;
@@ -38,19 +39,23 @@ public class CurrentAccountController {
 	}
 	
 	@RequestMapping("/addNewCA")
-	public String addNewCA(@ModelAttribute("account") CurrentAccount account, Model model, BindingResult result)
+	public String addNewCA(@ModelAttribute("account") CurrentAccount currentAccount, Model model, BindingResult result)
 			throws AccountNotFoundException {
-		accountValidation.validate(account, result);
+		accountValidation.validate(currentAccount, result);
 
 		if (result.hasErrors()) {
 			return "addNewCAForm";
 		}
 
-		if (account.getBankAccount().getAccountNumber() != 0) {
-			account = currentAccountService.updateCurrentAccount(account);
+		if (currentAccount.getBankAccount().getAccountNumber() != 0) {
+			currentAccount = currentAccountService.updateCurrentAccount(currentAccount);
 		} else {
-			account = currentAccountService.createNewCurrentAccount(account);
+			currentAccount = currentAccountService.createNewCurrentAccount(currentAccount);
 		}
+		Account account = new Account(currentAccount.getBankAccount().getAccountNumber(), currentAccount.getBankAccount().getAccountHolderName(),
+				currentAccount.getBankAccount().getAccountBalance(), false, currentAccount.getOdLimit(),
+				currentAccount.getBankAccount().getType());
+		model.addAttribute("account", account);
 		model.addAttribute("account", account);
 		return "AccountDetails";
 	}

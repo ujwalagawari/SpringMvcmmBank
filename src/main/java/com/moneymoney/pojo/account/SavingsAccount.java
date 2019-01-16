@@ -31,6 +31,12 @@ public class SavingsAccount {
 		this.salary = salary;
 	}
 
+	
+
+	public SavingsAccount(boolean salary) {
+		this.salary=salary;
+	}
+
 	public boolean isSalary() {
 		return salary;
 	}

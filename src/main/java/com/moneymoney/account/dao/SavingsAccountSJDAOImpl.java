@@ -51,6 +51,7 @@ public class SavingsAccountSJDAOImpl implements SavingsAccountDAO{
 		},holder);
 		
 		account.getBankAccount().setAccountNumber(holder.getKey().intValue());
+		account.getBankAccount().setType("SA");
 		return account;
 	}
 

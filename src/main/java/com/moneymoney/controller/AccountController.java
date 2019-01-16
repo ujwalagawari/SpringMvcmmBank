@@ -53,7 +53,7 @@ public class AccountController {
 		}
 		//List<SavingsAccount> accounts = service.getAllSavingsAccount();
 		List<Account> accounts = service.getAllAccounts();
-		//System.out.println(accounts.toString());
+		System.out.println(accounts.get(1).toString());
 		model.addAttribute("accounts", accounts);
 		return "AccountDetails";
 	}
@@ -66,20 +66,23 @@ public class AccountController {
 	
 
 	@RequestMapping("/addNewSA")
-	public String addNewSA(@ModelAttribute("account") SavingsAccount account, Model model, BindingResult result)
+	public String addNewSA(@ModelAttribute("account") SavingsAccount savingAccount, Model model, BindingResult result)
 			throws ClassNotFoundException, SQLException, AccountNotFoundException {
-		accountValidation.validate(account, result);
+		accountValidation.validate(savingAccount, result);
 
 		if (result.hasErrors()) {
 			return "addNewSAForm";
 		}
 
-		if (account.getBankAccount().getAccountNumber() != 0) {
-			account = service.updateAccount(account, account.getBankAccount().getAccountNumber());
+		if (savingAccount.getBankAccount().getAccountNumber() != 0) {
+			savingAccount = service.updateAccount(savingAccount, savingAccount.getBankAccount().getAccountNumber());
 		} else {
-			account = service.createNewAccount(account.getBankAccount().getAccountHolderName(),
-					account.getBankAccount().getAccountBalance(), account.isSalary());
+			savingAccount = service.createNewAccount(savingAccount.getBankAccount().getAccountHolderName(),
+					savingAccount.getBankAccount().getAccountBalance(), savingAccount.isSalary());
 		}
+		Account account = new Account(savingAccount.getBankAccount().getAccountNumber(), savingAccount.getBankAccount().getAccountHolderName(),
+				savingAccount.getBankAccount().getAccountBalance(), savingAccount.isSalary(), 0.0, 
+				savingAccount.getBankAccount().getType());
 		model.addAttribute("account", account);
 		// return "redirect:display";
 		return "AccountDetails";

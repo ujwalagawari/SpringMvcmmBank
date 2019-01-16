@@ -50,6 +50,7 @@ public class CurrentAccountDaoImpl implements CurrentAccountDao {
 		}, holder);
 
 		account.getBankAccount().setAccountNumber(holder.getKey().intValue());
+		account.getBankAccount().setType("CA");
 		return account;
 	}
 
